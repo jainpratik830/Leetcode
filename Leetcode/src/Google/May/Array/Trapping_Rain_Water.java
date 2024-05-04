@@ -1,4 +1,4 @@
-package Google.May;
+package Google.May.Array;
 
 public class Trapping_Rain_Water {
 
