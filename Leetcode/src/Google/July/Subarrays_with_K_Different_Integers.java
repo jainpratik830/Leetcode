@@ -16,6 +16,7 @@ public class Subarrays_with_K_Different_Integers {
         int left =0;
         int right =0;
         int ans =0;
+
         while (right<nums.length){
             int curr = nums[right];
             map.put(nums[right],map.getOrDefault(nums[right],0)+1);
