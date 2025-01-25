@@ -8,69 +8,71 @@ public class Word_Ladder {
             if (!wordList.contains(endWord) || beginWord.equals(endWord)) {
                 return 0;
             }
+            Set<String> words = new HashSet<>(wordList);
+            HashMap<String,Set<String>> map =new HashMap<>();
+            int size = wordList.get(0).length();
+            for (int i=0;i<wordList.size();i++){
+                String currWord = wordList.get(i);
+                for (int j=0;j<size;j++){
 
-            int n = wordList.size();
-            int m = wordList.get(0).length();
-            List<List<Integer>> adj = new ArrayList<>(n);
-            for (int i = 0; i < n; i++) {
-                adj.add(new ArrayList<>());
-            }
+                    int index = j;
+                    for (int c=0;c<26;c++){
 
-            Map<String, Integer> mp = new HashMap<>();
-            for (int i = 0; i < n; i++) {
-                mp.put(wordList.get(i), i);
-            }
-
-            for (int i = 0; i < n; i++) {
-                for (int j = i + 1; j < n; j++) {
-                    int cnt = 0;
-                    for (int k = 0; k < m; k++) {
-                        if (wordList.get(i).charAt(k) != wordList.get(j).charAt(k)) {
-                            cnt++;
+                        char curr = (char) (c+'a');
+                        if (curr==currWord.charAt(j)){
+                            continue;
                         }
-                    }
-                    if (cnt == 1) {
-                        adj.get(i).add(j);
-                        adj.get(j).add(i);
+                        String word = currWord.substring(0,j)+curr+currWord.substring(j+1);
+                        if (words.contains(word)){
+                            map.putIfAbsent(currWord,new HashSet<>());
+                            map.putIfAbsent(word,new HashSet<>());
+                            map.get(currWord).add(word);
+                            map.get(word).add(currWord);
+                        }
                     }
                 }
             }
+            // System.out.println(map);
+            Queue<String> queue= new LinkedList<>();
+            Set<String> visited = new HashSet<>();
+            for (int j=0;j<size;j++){
 
-            Queue<Integer> q = new LinkedList<>();
-            int res = 1;
-            Set<Integer> visit = new HashSet<>();
-
-            for (int i = 0; i < m; i++) {
-                for (char c = 'a'; c <= 'z'; c++) {
-                    if (c == beginWord.charAt(i)) {
+                int index = j;
+                for (int c=0;c<26;c++){
+                    char curr = (char) (c+'a');
+                    if (curr==beginWord.charAt(j)){
                         continue;
                     }
-                    String word = beginWord.substring(0, i) + c + beginWord.substring(i + 1);
-                    if (mp.containsKey(word) && !visit.contains(mp.get(word))) {
-                        q.add(mp.get(word));
-                        visit.add(mp.get(word));
+                    String word = beginWord.substring(0,j)+curr+beginWord.substring(j+1);
+                    if (words.contains(word) && !visited.contains(word)){
+                        queue.add(word);
+                        visited.add(word);
                     }
                 }
             }
 
-            while (!q.isEmpty()) {
-                res++;
-                int size = q.size();
-                for (int i = 0; i < size; i++) {
-                    int node = q.poll();
-                    if (wordList.get(node).equals(endWord)) {
-                        return res;
+            int ans =1;
+            while (!queue.isEmpty()){
+                ans++;
+                int n = queue.size();
+                for (int i = 0; i < n; i++) {
+                    String curr = queue.poll();
+                    if (curr.equals(endWord)){
+                        return ans;
                     }
-                    for (int nei : adj.get(node)) {
-                        if (!visit.contains(nei)) {
-                            visit.add(nei);
-                            q.add(nei);
+                    for (String s:map.getOrDefault(curr,new HashSet<>())){
+
+                        if (!visited.contains(s)){
+                            visited.add(s);
+                            queue.add(s);
                         }
                     }
                 }
+
             }
 
             return 0;
+
         }
 
 
