@@ -31,7 +31,7 @@ public class Main {
 
         // Start traffic control
         trafficController.controlTraffic();
-        Thread.sleep(30000);
+        Thread.sleep(10000);
         // Simulate an emergency on a specific road
         trafficController.handleEmergency(2);
     }
